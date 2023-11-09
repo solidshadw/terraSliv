@@ -2,6 +2,8 @@
 
 <mark>Please refer to the [SETUP](https://github.com/solidshadw/terraSliv/blob/main/SETUP.md) document, if you don't have AWS cli and Terraform installed. You will also need to setup some AWS credentials.</mark>
 
+*Shoutout to David Thurn (@packetmonster) since I got most of the documentation and the main.tf from his workshop at [SaintCon2023](https://github.com/towerindustries/saintcon23/tree/main). Credits to him as I will using some of that code*
+
 ### Git Clone Command - if not already done.
 
 ```

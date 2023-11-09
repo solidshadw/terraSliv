@@ -1,8 +1,6 @@
 # Automating deployment of sliver in Terraform
 # Instructions:  Base Configuration
 
-*Shoutout to David Thurn (@packetmonster) since I got most of the documentation and the main.tf from his workshop at SaintCon2023(https://github.com/towerindustries/saintcon23/tree/main). Credits to him as I will using some of that code*
-
 ## Prerequisites -- To be done **BEFORE** to setup environment
 * AWS Account
 * AWS CLI
