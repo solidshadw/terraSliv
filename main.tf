@@ -1,16 +1,21 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "5.24.0"
-    }
+#######################
+## Search for an AMI ##
+#######################
+data "aws_ami" "latest_ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/*ubuntu-bionic-18.04-amd64-server-*"]
   }
-  required_version = ">= 1.5.7"
-}
-
-provider "aws" {
-  # Configuration options
-  region = var.region
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
 }
 
 ####################
@@ -70,7 +75,7 @@ resource "aws_security_group" "main" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = var.sg_cidr_blocks_allow_ssh
-    }
+  }
   ingress {
     from_port   = 80
     to_port     = 80
@@ -83,6 +88,7 @@ resource "aws_security_group" "main" {
     protocol    = "tcp"
     cidr_blocks = var.sg_cidr_blocks_allow_https
   }
+  vpc_id = aws_vpc.sliverVPC.id
 }
 
 
@@ -90,9 +96,10 @@ resource "aws_security_group" "main" {
 ## Create the actual Ec2 Instance ##
 ####################################
 resource "aws_instance" "sliver-c2" {
-  ami           = var.ami-id        # Feed it the AMI you found
-  instance_type = var.instance_type # Choose the size/type of compute you want
-  key_name      = var.ssh-key-name  # Here is the public key you want for ssh.
+  ami           = data.aws_ami.latest_ubuntu.id # Feed it the AMI you found
+  instance_type = var.instance_type             # Choose the size/type of compute you want
+  key_name      = var.ssh-key-name              # Here is the public key you want for ssh.
+  subnet_id     = aws_subnet.sliverSubnet.id
 
   root_block_device {
     volume_size = 30    # If you wanted to increase the hard drive space here it is.
@@ -110,5 +117,26 @@ resource "aws_instance" "sliver-c2" {
   vpc_security_group_ids = [
     aws_security_group.main.id # Add the security group you created.
   ]
-  user_data = file("sliver_install.sh") # This is the script that will run on the instance.
+  user_data = <<EOF
+#!/bin/bash
+
+sudo apt update
+export DEBIAN_FRONTEND=noninteractive
+sudo apt install -y curl mingw-w64 binutils-mingw-w64 g++-mingw-w64
+
+# Metaisploit install
+sleep 3
+# MSF nightly framework installer
+curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
+sudo chmod +x msfinstall
+sudo ./msfinstall
+
+#sliver install
+mkdir sliver
+cd sliver
+sudo curl https://sliver.sh/install -o sliverc2.sh
+sudo chmod +x sliverc2.sh
+sudo ./sliverc2.sh
+sudo systemctl status sliver --no-pager
+EOF
 }

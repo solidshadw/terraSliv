@@ -2,10 +2,10 @@
 ## EC2 Variables ##
 ###################
 
-variable "ami-id" {
-  #Canonical, Ubuntu, 22.04 LTS, amd64 jammy image build on 2023-10-30
-  default = "ami-0e783882a19958fff"
-}
+# variable "ami-id" {
+#   #Canonical, Ubuntu, 22.04 LTS, amd64 jammy image build on 2023-10-30
+#   default = "ami-0e783882a19958fff"
+# }
 
 variable "ssh-key-name" {
   description = "Name of the SSH keypair to use in AWS"
@@ -73,4 +73,10 @@ variable "availability_zone" {
   description = "The availablity zone"
   type        = string
   default     = "us-east-1a"
+}
+
+variable "profile" {
+  description = "The availablity zone"
+  type        = string
+  default     = "sliver"
 }
