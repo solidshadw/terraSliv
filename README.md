@@ -9,8 +9,32 @@
 ```
 git clone https://github.com/solidshadw/terraSliv.git
 ```
+### Get up and Running Commands
+Explanation of terraform commands is below: 
 
-## 3: Base Configuration
+```bash
+cd terraSlive
+```
+```bash
+terraform init
+```
+```bash
+terraform fmt
+```
+```bash
+terraform plan
+```
+```bash
+terraform apply
+```
+Please wait a few minutes for the bash script to complete after EC2 has been deployed
+
+After you are done, destroy your environment. If not, you will be charged by AWS after your free tier hours are up. Don't tell I didn't tell you...
+```bash
+terraform destroy
+```
+
+## 1: Base Configuration
 
 Rename the following "example" to your desired name:
 ```
@@ -65,7 +89,7 @@ Modify the security group with your current IP.
   }
 ```
 
-# 4: Terraform Commands
+# 2: Terraform Commands
 1. `terraform init` is used to initialize a new or existing Terraform project.
 When you run this command in a directory containing your Terraform configuration files (usually with a main.tf file), Terraform initializes the working directory by downloading any required provider plugins and modules defined in your configuration.
 ```bash
