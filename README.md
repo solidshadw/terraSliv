@@ -9,11 +9,11 @@
 ```
 git clone https://github.com/solidshadw/terraSliv.git
 ```
-### Get up and Running Commands
+### Start terraform ec2 commands
 Explanation of terraform commands is below: 
 
 ```bash
-cd terraSlive
+cd terraSliv
 ```
 ```bash
 terraform init
@@ -89,7 +89,7 @@ Modify the security group with your current IP.
   }
 ```
 
-# 2: Terraform Commands
+## 2: Terraform Commands
 1. `terraform init` is used to initialize a new or existing Terraform project.
 When you run this command in a directory containing your Terraform configuration files (usually with a main.tf file), Terraform initializes the working directory by downloading any required provider plugins and modules defined in your configuration.
 ```bash
