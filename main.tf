@@ -138,5 +138,6 @@ sudo curl https://sliver.sh/install -o sliverc2.sh
 sudo chmod +x sliverc2.sh
 sudo ./sliverc2.sh
 sudo systemctl status sliver --no-pager
+sudo systemctl enable sliver
 EOF
 }
