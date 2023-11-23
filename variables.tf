@@ -80,3 +80,23 @@ variable "profile" {
   type        = string
   default     = "sliver"
 }
+
+
+#########################
+## Provisioner Details ##
+#########################
+variable "private_key" {
+  description = "Path to private key"
+  type        = string
+  default     = "~/.ssh/sliverC2.pem"
+}
+variable "operator" {
+  description = "Operator to use for sliverC2"
+  type        = string
+  default     = "solidshdw"
+}
+variable "lhost" {
+  description = "Host to use for sliverC2"
+  type        = string
+  default     = "1.2.3.4"
+}

@@ -88,6 +88,12 @@ resource "aws_security_group" "main" {
     protocol    = "tcp"
     cidr_blocks = var.sg_cidr_blocks_allow_https
   }
+  ingress {
+    from_port   = 31337
+    to_port     = 31337
+    protocol    = "tcp"
+    cidr_blocks = var.sg_cidr_blocks_allow_https
+  }
   vpc_id = aws_vpc.sliverVPC.id
 }
 
@@ -117,27 +123,24 @@ resource "aws_instance" "sliver-c2" {
   vpc_security_group_ids = [
     aws_security_group.main.id # Add the security group you created.
   ]
-  user_data = <<EOF
-#!/bin/bash
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    password    = ""
+    private_key = file(var.private_key)
+    host        = self.public_ip
+  }
 
-sudo apt update
-export DEBIAN_FRONTEND=noninteractive
-sudo apt install -y curl mingw-w64 binutils-mingw-w64 g++-mingw-w64
-
-# Metaisploit install
-sleep 3
-# MSF nightly framework installer
-curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
-sudo chmod +x msfinstall
-sudo ./msfinstall
-
-#sliver install
-mkdir sliver
-cd sliver
-sudo curl https://sliver.sh/install -o sliverc2.sh
-sudo chmod +x sliverc2.sh
-sudo ./sliverc2.sh
-sudo systemctl status sliver --no-pager
-sudo systemctl enable sliver
-EOF
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update && sudo apt upgrade -y",
+      "curl https://sliver.sh/install | sudo bash",
+      "mkdir -p /home/ubuntu/sliver/operators",
+      "sudo /root/sliver-server operator --name ${var.operator} --lhost ${var.lhost} --save /home/ubuntu/sliver/operators/${var.operator}.cfg",
+      "sudo chown ubuntu:ubuntu /home/ubuntu/sliver/operators/5p00k5.cfg",
+    ]
+  }
+  provisioner "local-exec" {
+    command = "scp -i ${var.private_key} -o StrictHostKeyChecking=no ubuntu@${self.public_ip}:/home/ubuntu/sliver/operators/${var.operator}.cfg ~/sliver/${var.operator}.cfg; sliver-client import ~/sliver/${var.operator}.cfg"
+  }
 }
