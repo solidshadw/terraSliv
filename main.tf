@@ -136,7 +136,7 @@ resource "aws_instance" "sliver-c2" {
       "sudo apt update && sudo apt upgrade -y",
       "curl https://sliver.sh/install | sudo bash",
       "mkdir -p /home/ubuntu/sliver/operators",
-      "sudo /root/sliver-server operator --name ${var.operator} --lhost ${var.lhost} --save /home/ubuntu/sliver/operators/${var.operator}.cfg",
+      "sudo /root/sliver-server operator --name ${var.operator} --lhost ${self.public_ip} --save /home/ubuntu/sliver/operators/${var.operator}.cfg",
       "sudo chown ubuntu:ubuntu /home/ubuntu/sliver/operators/5p00k5.cfg",
     ]
   }
